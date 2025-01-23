@@ -1,0 +1,58 @@
+Functii folosite:
+-make file client:
+  Creeaza sau actualizeaza un fisier si adauga hash-ul segmentului descarcat
+
+-request_file_info_from_tracker_db:
+  Solicita informatii despre segmentele unui fisier de la tracker
+    - Trimite un request catre tracker
+    - Primeste nr de segmente, proprietarii si indicii acestora
+
+-peer_chunk_request:
+  Trimite o cerere pentru un segment catre alt peer
+    - Alege un proprietar aleatoriu din lista segmentului
+    - Trimite cererea si primeste hash-ul chunkului
+    - Actualizeaza informatiile despre chunk in structura file_entry
+
+-manage_requested_files:
+  Gestioneaza descarcarea unui fisier cerut
+    - Solicita informatii despre segmente
+    - Trimite cereri pentru segmentele lipsa
+    - Verifica daca toate segmentele au fost primite si creeaza fisierul
+
+-download_thread_func:
+  Executa descarcarea fisierelor cerute de un peer
+    - Ruleaza intr-un thread separat
+    - Itereaza prin fisierele cerute si descarca segmentele lipsa
+    - Trimite mesaj RDY trackerului dupa finalizarea descarcarii
+
+-upload_thread_func:
+  Gestioneaza cererile de upload de la alti peers
+    -Primeste chunk request-uri
+    -Trimite hash-ul chunk-ului cerut
+    -Termina cand primeste mesajul GATA
+
+-tracker_database_add:
+  Adauga informatiile despre fisiere
+    -Primeste numarul de fisiere si detalii despre fiecare fisier de la peers
+    -Actualizeaza baza de date tracker
+
+-send_done_message:
+  Trimite mesaj GATA tuturor peers-ilor pentru a finaliza procesul
+
+-tracker_func:
+  Gestioneaza activitatea trackerului
+    -Primeste si stocheaza informatiile despre fisiere
+    -Raspunde cererilor REQ_O pentru lista de proprietari
+    -Asteapta mesajul RDY de la toti si trimite GATA
+
+-process_owned_files:
+  Proceseaza fisierele detinute de un peer
+    -Citeste fisierele dintr-un fisier de intrare (inX.txt)
+    -Trimite numarul de fisiere si informatiile catre tracker
+    -Initializeaza structurile pentru fisierele cerute
+    -Primeste ACK pentru a confirma ca informatiile au fost primite si stocate cu succes
+
+-peer:
+  Gestioneaza activitatea unui peer
+    -Apeleaza process_owned_files.
+    -Creeaza threadurile de upload si download
